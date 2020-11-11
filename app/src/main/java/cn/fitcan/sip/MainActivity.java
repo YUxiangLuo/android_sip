@@ -1,11 +1,6 @@
 package cn.fitcan.sip;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.net.sip.SipManager;
 import android.os.Bundle;
 
@@ -32,17 +27,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.USE_SIP)
-                == PackageManager.PERMISSION_GRANTED){
-        }else{
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.USE_SIP}, 0);
-        }
-
-        Boolean b1 = this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_SIP);
-        Boolean b2 = this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_SIP_VOIP);
-
-        System.out.println();
-
         try {
             // Create endpoint
             Endpoint ep = new Endpoint();
@@ -58,24 +42,13 @@ public class MainActivity extends AppCompatActivity {
             ep.libStart();
 
             AccountConfig acfg = new AccountConfig();
-            acfg.setIdUri("sip:test@pjsip.org");
-            acfg.getRegConfig().setRegistrarUri("sip:pjsip.org");
-            AuthCredInfo cred = new AuthCredInfo("digest", "*", "test", 0, "secret");
+            acfg.setIdUri("sip:9527@192.168.42.90");
+            acfg.getRegConfig().setRegistrarUri("sip:192.168.42.90");
+            AuthCredInfo cred = new AuthCredInfo("digest", "*", "9527", 0, "9527");
             acfg.getSipConfig().getAuthCreds().add( cred );
             // Create the account
             MyAccount acc = new MyAccount();
             acc.create(acfg);
-            // Here we don't have anything else to do..
-            Thread.sleep(10000);
-            /* Explicitly delete the account.
-             * This is to avoid GC to delete the endpoint first before deleting
-             * the account.
-             */
-            acc.delete();
-
-            // Explicitly destroy and delete endpoint
-            ep.libDestroy();
-            ep.delete();
 
         } catch (Exception e) {
             System.out.println(e);
