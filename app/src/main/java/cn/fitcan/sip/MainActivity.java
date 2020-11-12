@@ -41,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
     private boolean permissionToRecordAccepted = false;
     private String [] permissions = {Manifest.permission.RECORD_AUDIO};
 
+    private Endpoint ep;
+    private MyAccount acc;
+    private MyCall myCall;
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -52,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         if (!permissionToRecordAccepted ) finish();
         try {
             // Create endpoint
-            Endpoint ep = new Endpoint();
+            ep = new Endpoint();
             ep.libCreate();
             // Initialize endpoint
             EpConfig epConfig = new EpConfig();
@@ -70,13 +75,15 @@ public class MainActivity extends AppCompatActivity {
             AuthCredInfo cred = new AuthCredInfo("digest", "*", "9527", 0, "9527");
             acfg.getSipConfig().getAuthCreds().add( cred );
             // Create the account
-            MyAccount acc = new MyAccount();
+            acc = new MyAccount();
             acc.create(acfg);
-            MyCall myCall = new MyCall(acc, pjsua_invalid_id_const_.PJSUA_INVALID_ID);
+            myCall = new MyCall(acc, pjsua_invalid_id_const_.PJSUA_INVALID_ID);
             CallOpParam prm = new CallOpParam(true);
             myCall.makeCall("sip:4002@192.168.1.32", prm);
+            System.out.println("call call call call");
         }catch (Exception e) {
             System.out.println(e);
+            return;
         }
     }
 
@@ -90,5 +97,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+    }
+
+    @Override
+    protected void onDestroy() {
+        System.out.println("Destroy Destroy Destroy Destroy Destroy Destroy");
+        super.onDestroy();
+        try {
+            acc.delete();
+            // Explicitly destroy and delete endpoint
+            ep.libDestroy();
+            ep.delete();
+        }catch (Exception e) {
+            System.out.println(e);
+            return;
+        }
     }
 }
