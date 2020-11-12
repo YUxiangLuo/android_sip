@@ -59,22 +59,22 @@ public class MainActivity extends AppCompatActivity {
             ep.libInit( epConfig );
             // Create SIP transport. Error handling sample is shown
             TransportConfig sipTpConfig = new TransportConfig();
-            sipTpConfig.setPort(5060);
+            sipTpConfig.setPort(5080);
             ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, sipTpConfig);
             // Start the library
             ep.libStart();
 
             AccountConfig acfg = new AccountConfig();
-            acfg.setIdUri("sip:9999@192.168.42.90");
-            acfg.getRegConfig().setRegistrarUri("sip:192.168.42.90");
-            AuthCredInfo cred = new AuthCredInfo("digest", "*", "9999", 0, "9999");
+            acfg.setIdUri("sip:9527@192.168.1.32");
+            acfg.getRegConfig().setRegistrarUri("sip:192.168.1.32");
+            AuthCredInfo cred = new AuthCredInfo("digest", "*", "9527", 0, "9527");
             acfg.getSipConfig().getAuthCreds().add( cred );
             // Create the account
             MyAccount acc = new MyAccount();
             acc.create(acfg);
             MyCall myCall = new MyCall(acc, pjsua_invalid_id_const_.PJSUA_INVALID_ID);
             CallOpParam prm = new CallOpParam(true);
-            myCall.makeCall("sip:4004@192.168.42.90", prm);
+            myCall.makeCall("sip:4002@192.168.1.32", prm);
         }catch (Exception e) {
             System.out.println(e);
         }
