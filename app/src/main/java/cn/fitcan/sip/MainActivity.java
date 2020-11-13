@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             callSetting.setAudioCount(1);
             callSetting.setVideoCount(0);
             callSetting.setFlag(pjsua_call_flag.PJSUA_CALL_INCLUDE_DISABLED_MEDIA);
-            myCall.makeCall("sip:4002@192.168.1.32", prm);
+            myCall.makeCall("sip:8101@192.168.1.32", prm);
             System.out.println("call call call call");
         }catch (Exception e) {
             System.out.println(e);
