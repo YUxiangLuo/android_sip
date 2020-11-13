@@ -26,11 +26,46 @@ class MyCall extends Call {
     @Override
     public void onCallState(OnCallStateParam prm) {
         super.onCallState(prm);
+        try {
+            CallInfo callInfo = getInfo();
+
+            int role = callInfo.getRole();
+            if(role == pjsip_role_e.PJSIP_ROLE_UAC) {
+                System.out.println("==============呼出：状态变更====================");
+            }else if(role == pjsip_role_e.PJSIP_ROLE_UAS) {
+                System.out.println("==============呼入：状态变更====================");
+            }
+
+            int state = callInfo.getState();
+            if (state == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
+                System.out.println("==============正在呼出====================");
+            } else if (state == pjsip_inv_state.PJSIP_INV_STATE_EARLY) {
+                System.out.println("==============对方正在响铃====================");
+            } else if (state == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING) {
+                System.out.println("==============连接成功====================");
+            } else if (state == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
+                System.out.println("==============通话中====================");
+            } else if (state == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
+                System.out.println("==============挂断====================");
+            }
+
+        }catch (Exception e) {
+            System.out.println(e);
+            return;
+        }
     }
 
     @Override
     public void onCallMediaState(OnCallMediaStateParam prm) {
         super.onCallMediaState(prm);
+        CallInfo callInfo;
+        try {
+            callInfo = getInfo();
+        }catch (Exception e) {
+            System.out.println(e);
+            return;
+        }
+        // try to convert MyCall to inner class to get ep then get audDevice Manager
     }
 }
 
@@ -104,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("Destroy Destroy Destroy Destroy Destroy Destroy");
         super.onDestroy();
         try {
+            myCall.delete();
             acc.delete();
             // Explicitly destroy and delete endpoint
             ep.libDestroy();
