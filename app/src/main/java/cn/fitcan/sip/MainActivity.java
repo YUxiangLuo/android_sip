@@ -6,10 +6,14 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.sip.SipManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import org.pjsip.pjsua2.*;
+import org.w3c.dom.Text;
 
 import java.util.logging.Logger;
 
@@ -187,6 +191,32 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+
+        ChannelLayout channelLayout1 = findViewById(R.id.col1);
+        channelLayout1.setChannelID("No.01");
+        channelLayout1.setNumber("9527");
+        channelLayout1.setBColor(Color.parseColor("#DDDDDD"));
+        channelLayout1.findViewById(R.id.btn_jieting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"); //SIP拨号阻塞？
+            }
+        });
+
+        ChannelLayout channelLayout2 = findViewById(R.id.col2);
+        channelLayout2.setChannelID("No.02");
+        channelLayout2.setNumber("9528");
+        channelLayout2.setBColor(Color.parseColor("#FFDDDD"));
+
+        ChannelLayout channelLayout3 = findViewById(R.id.col3);
+        channelLayout3.setChannelID("No.03");
+        channelLayout3.setNumber("9529");
+        channelLayout3.setBColor(Color.parseColor("#DDDDDD"));
+
+        ChannelLayout channelLayout4 = findViewById(R.id.col4);
+        channelLayout4.setChannelID("No.04");
+        channelLayout4.setNumber("9530");
+        channelLayout4.setBColor(Color.parseColor("#FFDDDD"));
     }
 
     @Override

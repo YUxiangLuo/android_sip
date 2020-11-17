@@ -7,6 +7,25 @@
     android:orientation="horizontal"
     tools:context=".MainActivity">
 
-    <include layout="@layout/hint_column" />
+    <include layout="@layout/hint_column" android:id="@+id/col0"/>
+    <cn.fitcan.sip.ChannelLayout
+        android:id="@+id/col1"
+        android:layout_width="200dp"
+        android:layout_height="match_parent" />
+
+    <cn.fitcan.sip.ChannelLayout
+        android:id="@+id/col2"
+        android:layout_width="200dp"
+        android:layout_height="match_parent" />
+
+    <cn.fitcan.sip.ChannelLayout
+        android:id="@+id/col3"
+        android:layout_width="200dp"
+        android:layout_height="match_parent" />
+
+    <cn.fitcan.sip.ChannelLayout
+        android:id="@+id/col4"
+        android:layout_width="200dp"
+        android:layout_height="match_parent" />
 
 </LinearLayout>
