@@ -1,5 +1,6 @@
 package cn.fitcan.sip
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,11 +9,105 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.os.Process
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import org.pjsip.pjsua2.*
 import kotlin.concurrent.thread
 
+// Subclass to extend the Account and get notifications etc.
+internal class MyAccount : Account() {
+    override fun onRegState(prm: OnRegStateParam) {
+        println("*** On registration state: " + prm.code + prm.reason)
+    }
+}
+
 class SipService : Service() {
+    private var ep: Endpoint? = null
+    private var acc: MyAccount? = null
+
+    internal inner class MyCall(myAccount: MyAccount?, id: Int) : Call(myAccount, id) {
+        override fun onCallState(prm: OnCallStateParam) {
+            super.onCallState(prm)
+            try {
+                val callInfo = info
+                val role = callInfo.role
+                if (role == pjsip_role_e.PJSIP_ROLE_UAC) {
+                    println("==============呼出：状态变更====================")
+                } else if (role == pjsip_role_e.PJSIP_ROLE_UAS) {
+                    println("==============呼入：状态变更====================")
+                }
+                val state = callInfo.state
+                if (state == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
+                    println("==============正在呼出====================")
+                } else if (state == pjsip_inv_state.PJSIP_INV_STATE_EARLY) {
+                    println("==============对方正在响铃====================")
+                } else if (state == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING) {
+                    println("==============连接成功====================")
+                } else if (state == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
+                    println("==============通话中====================")
+                } else if (state == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
+                    println("==============挂断====================")
+                }
+            } catch (e: Exception) {
+                println(e)
+                return
+            }
+        }
+
+        override fun onCallMediaState(prm: OnCallMediaStateParam) {
+            println("..............................on call media state.............................")
+            val info: CallInfo
+            info = try {
+                getInfo()
+            } catch (exc: Exception) {
+                println("onCallMediaState: error while getting call info")
+                return
+            }
+            for (i in info.media.indices) {
+                val media = getMedia(i.toLong())
+                val mediaInfo = info.media[i]
+                if (mediaInfo.type == pjmedia_type.PJMEDIA_TYPE_AUDIO && media != null && mediaInfo.status == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE) {
+                    handleAudioMedia(media)
+                } else if (mediaInfo.type == pjmedia_type.PJMEDIA_TYPE_VIDEO && mediaInfo.status == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE && mediaInfo.videoIncomingWindowId != pjsua2.INVALID_ID) {
+                    handleVideoMedia(mediaInfo)
+                }
+            }
+        }
+    }
+
+    private var myCall: MyCall? = null
+    private fun handleAudioMedia(media: Media) {
+        val audioMedia = AudioMedia.typecastFromMedia(media)
+
+        // connect the call audio media to sound device
+        try {
+            val audDevManager = ep!!.audDevManager()
+            if (audioMedia != null) {
+                try {
+                    audioMedia.adjustRxLevel(1.5.toFloat())
+                    audioMedia.adjustTxLevel(1.5.toFloat())
+                } catch (exc: Exception) {
+                    println("Error while adjusting levels")
+                }
+                audioMedia.startTransmit(audDevManager.playbackDevMedia)
+                audDevManager.captureDevMedia.startTransmit(audioMedia)
+            }
+        } catch (exc: Exception) {
+            println("Error while connecting audio media to sound device")
+        }
+    }
+
+    private fun handleVideoMedia(mediaInfo: CallMediaInfo) {
+        println("================Handle VIDEO MEDIA============")
+    }
+
+    companion object {
+        init {
+            System.loadLibrary("pjsua2")
+            println("Library loaded")
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -36,13 +131,55 @@ class SipService : Service() {
         Log.d("Sip Service", "onStartCommand executed");
         thread {
             Log.d("SipService", "Thread is ${Thread.currentThread().name}")
+            try {
+                // Create endpoint
+                ep = Endpoint()
+                ep!!.libCreate()
+                // Initialize endpoint
+                val epConfig = EpConfig()
+                ep!!.libInit(epConfig)
+                // Create SIP transport. Error handling sample is shown
+                val sipTpConfig = TransportConfig()
+                sipTpConfig.port = 5080
+                ep!!.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, sipTpConfig)
+                // Start the library
+                ep!!.libStart()
+                val acfg = AccountConfig()
+                acfg.idUri = "sip:9527@192.168.1.32"
+                acfg.regConfig.registrarUri = "sip:192.168.1.32"
+                val cred = AuthCredInfo("digest", "*", "9527", 0, "9527")
+                acfg.sipConfig.authCreds.add(cred)
+                // Create the account
+                acc = MyAccount()
+                acc!!.create(acfg)
+                myCall = MyCall(acc, pjsua_invalid_id_const_.PJSUA_INVALID_ID)
+                val prm = CallOpParam()
+                val callSetting = prm.opt
+                callSetting.audioCount = 1
+                callSetting.videoCount = 0
+                callSetting.flag = pjsua_call_flag.PJSUA_CALL_INCLUDE_DISABLED_MEDIA.toLong()
+                myCall!!.makeCall("sip:4002@192.168.42.90", prm)
+                println("call call call call")
+            } catch (e: Exception) {
+                println(e)
+            }
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("Sip Service", "onDestroy executed");
+        Log.d("Sip Service", "onDestroy executed")
+        try {
+            myCall!!.delete()
+            acc!!.delete()
+            // Explicitly destroy and delete endpoint
+            ep!!.libDestroy()
+            ep!!.delete()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return
+        }
     }
 
     override fun onBind(intent: Intent): IBinder {
