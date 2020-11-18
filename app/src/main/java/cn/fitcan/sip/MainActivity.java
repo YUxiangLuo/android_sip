@@ -5,11 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.sip.SipManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.pjsip.pjsua2.*;
@@ -189,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Activity a = this;
         getSupportActionBar().hide();
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
@@ -217,6 +222,27 @@ public class MainActivity extends AppCompatActivity {
         channelLayout4.setChannelID("No.04");
         channelLayout4.setNumber("9530");
         channelLayout4.setBColor(Color.parseColor("#FFDDDD"));
+
+        Button btn_startsvc = (Button)findViewById(R.id.btn_startsvc);
+        btn_startsvc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("MainActivity", "start service now!!!");
+                Log.d("MainActivity", "Thread is " + Thread.currentThread().getName());
+                Intent intent = new Intent(a, SipService.class);
+                startService(intent);
+            }
+        });
+
+        Button btn_stopsvc = (Button) findViewById(R.id.btn_stopsvc);
+        btn_stopsvc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("stop service now!!!");
+                Intent intent = new Intent(a, SipService.class);
+                stopService(intent);
+            }
+        });
     }
 
     @Override
@@ -224,6 +250,9 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("Destroy Destroy Destroy Destroy Destroy Destroy");
         super.onDestroy();
         try {
+            Intent intent = new Intent(this, SipService.class);
+            stopService(intent);
+
             myCall.delete();
             acc.delete();
             // Explicitly destroy and delete endpoint
