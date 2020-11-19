@@ -2,7 +2,10 @@ package cn.fitcan.sip
 
 import android.Manifest
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -11,11 +14,15 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 
 
 class MainActivity : AppCompatActivity() {
+    lateinit var wsReceiver: WSReceiver
+
     private var permissionToRecordAccepted = false
     private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.INTERNET, Manifest.permission.MODIFY_AUDIO_SETTINGS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.WAKE_LOCK, Manifest.permission.VIBRATE, Manifest.permission.USE_SIP, Manifest.permission.CAMERA)
 
@@ -27,6 +34,8 @@ class MainActivity : AppCompatActivity() {
         if (!permissionToRecordAccepted) finish()
         val intent = Intent(this, SipService::class.java)
         startService(intent)
+        val ws_intent = Intent(this, WebSocketService::class.java)
+        startService(ws_intent)
     }
 
     companion object {
@@ -39,6 +48,12 @@ class MainActivity : AppCompatActivity() {
         val a: Activity = this
         supportActionBar!!.hide()
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
+
+        val intentFilter = IntentFilter()
+        intentFilter.addAction("cn.fitcan.action.HANDLE_WS_MESSAGE")
+        wsReceiver = WSReceiver()
+        registerReceiver(wsReceiver, intentFilter)
+
         val channelLayout1 = findViewById<ChannelLayout>(R.id.col1)
         channelLayout1.setChannelID("No.01")
         channelLayout1.setNumber("9527")
@@ -95,5 +110,18 @@ class MainActivity : AppCompatActivity() {
         stopService(intent)
         val pid = Process.myPid()
         Process.killProcess(pid)
+    }
+
+    fun changeStatus() {
+        findViewById<LinearLayout>(R.id.col0).setBackgroundColor(Color.GREEN);
+    }
+
+    inner class WSReceiver: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent != null) {
+                if(intent.extras?.get("type").toString()=="connect" && intent.extras?.get("data").toString()=="open")
+                    changeStatus()
+            }
+        }
     }
 }
