@@ -18,11 +18,14 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import org.json.JSONObject
 
 
 class MainActivity : AppCompatActivity() {
     lateinit var wsReceiver: WSReceiver
 
+    private var callId = "null"
+    private var localUri = "null"
     private var permissionToRecordAccepted = false
     private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.INTERNET, Manifest.permission.MODIFY_AUDIO_SETTINGS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.WAKE_LOCK, Manifest.permission.VIBRATE, Manifest.permission.USE_SIP, Manifest.permission.CAMERA)
 
@@ -35,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, SipService::class.java)
         startService(intent)
         val ws_intent = Intent(this, WebSocketService::class.java)
+        ws_intent.putExtra("msg_to_send", "no")
         startService(ws_intent)
     }
 
@@ -55,24 +59,156 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(wsReceiver, intentFilter)
 
         val channelLayout1 = findViewById<ChannelLayout>(R.id.col1)
-        channelLayout1.setChannelID("No.01")
-        channelLayout1.setNumber("9527")
-        channelLayout1.setBColor(Color.parseColor("#DDDDDD"))
+//        channelLayout1.setChannelID("No.01")
+//        channelLayout1.setNumber("9527")
+        channelLayout1.setBColor(Color.parseColor("#000000"))
         channelLayout1.findViewById<View>(R.id.btn_jieting).setOnClickListener {
-            println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx") //SIP拨号阻塞？
+            Log.d("NUMBER", channelLayout1.number)
+            var msg_to_send: String = ""
+            if (channelLayout1.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"ANSWER CALL\", \"callId_needAnswer\": \"${channelLayout1.callID}\", \"callLocalUri_needAnswer\": \"${channelLayout1.number}\", \"callId_handler\": \"${callId}\", \"callLocalUri_handler\": \"${localUri}\" }"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+            }
+
         }
+        channelLayout1.findViewById<View>(R.id.btn_daiji).setOnClickListener {
+            var msg_to_send = ""
+            if (channelLayout1.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"MUTE CALL\", \"number\": \"${channelLayout1.number}\"}"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+            }
+
+        }
+        channelLayout1.findViewById<View>(R.id.btn_guaji).setOnClickListener {
+            var msg_to_send = ""
+            if (channelLayout1.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"HANG UP CALL\", \"number\": \"${channelLayout1.number}\"}"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+                channelLayout1.reset();
+            }
+
+        }
+
+
         val channelLayout2 = findViewById<ChannelLayout>(R.id.col2)
-        channelLayout2.setChannelID("No.02")
-        channelLayout2.setNumber("9528")
-        channelLayout2.setBColor(Color.parseColor("#FFDDDD"))
+//        channelLayout2.setChannelID("No.02")
+//        channelLayout2.setNumber("9528")
+        channelLayout2.setBColor(Color.parseColor("#000000"))
+        channelLayout2.findViewById<View>(R.id.btn_jieting).setOnClickListener {
+            var msg_to_send = ""
+            if (channelLayout2.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"ANSWER CALL\", \"callId_needAnswer\": \"${channelLayout2.callID}\", \"callLocalUri_needAnswer\": \"${channelLayout2.number}\", \"callId_handler\": \"${callId}\", \"callLocalUri_handler\": \"${localUri}\" }"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+            }
+
+        }
+        channelLayout2.findViewById<View>(R.id.btn_daiji).setOnClickListener {
+            var msg_to_send = ""
+            if (channelLayout2.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"MUTE CALL\", \"number\": \"${channelLayout2.number}\"}"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+            }
+
+        }
+        channelLayout2.findViewById<View>(R.id.btn_guaji).setOnClickListener {
+            var msg_to_send = ""
+            if (channelLayout2.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"HANG UP CALL\", \"number\": \"${channelLayout2.number}\"}"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+                channelLayout2.reset()
+            }
+
+        }
+
+
         val channelLayout3 = findViewById<ChannelLayout>(R.id.col3)
-        channelLayout3.setChannelID("No.03")
-        channelLayout3.setNumber("9529")
-        channelLayout3.setBColor(Color.parseColor("#DDDDDD"))
+//        channelLayout3.setChannelID("No.03")
+//        channelLayout3.setNumber("9529")
+        channelLayout3.setBColor(Color.parseColor("#000000"))
+        channelLayout3.findViewById<View>(R.id.btn_jieting).setOnClickListener {
+            var msg_to_send = ""
+            if (channelLayout3.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"ANSWER CALL\", \"callId_needAnswer\": \"${channelLayout3.callID}\", \"callLocalUri_needAnswer\": \"${channelLayout3.number}\", \"callId_handler\": \"${callId}\", \"callLocalUri_handler\": \"${localUri}\" }"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+            }
+
+        }
+        channelLayout3.findViewById<View>(R.id.btn_daiji).setOnClickListener {
+            var msg_to_send = ""
+            if (channelLayout3.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"MUTE CALL\", \"number\": \"${channelLayout3.number}\"}"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+            }
+
+        }
+        channelLayout3.findViewById<View>(R.id.btn_guaji).setOnClickListener {
+            var msg_to_send = ""
+            if (channelLayout3.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"HANG UP CALL\", \"number\": \"${channelLayout3.number}\"}"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+                channelLayout3.reset()
+            }
+
+        }
+
+
         val channelLayout4 = findViewById<ChannelLayout>(R.id.col4)
-        channelLayout4.setChannelID("No.04")
-        channelLayout4.setNumber("9530")
-        channelLayout4.setBColor(Color.parseColor("#FFDDDD"))
+//        channelLayout4.setChannelID("No.04")
+//        channelLayout4.setNumber("9530")
+        channelLayout4.setBColor(Color.parseColor("#000000"))
+        channelLayout4.findViewById<View>(R.id.btn_jieting).setOnClickListener {
+            var msg_to_send = ""
+            if (channelLayout4.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"ANSWER CALL\", \"callId_needAnswer\": \"${channelLayout4.callID}\", \"callLocalUri_needAnswer\": \"${channelLayout4.number}\", \"callId_handler\": \"${callId}\", \"callLocalUri_handler\": \"${localUri}\" }"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+            }
+
+        }
+        channelLayout4.findViewById<View>(R.id.btn_daiji).setOnClickListener {
+            var msg_to_send = ""
+            if (channelLayout4.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"MUTE CALL\", \"number\": \"${channelLayout4.number}\"}"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+            }
+
+        }
+        channelLayout4.findViewById<View>(R.id.btn_guaji).setOnClickListener {
+            var msg_to_send = ""
+            if (channelLayout4.number!=="0000") {
+                msg_to_send = "{ \"msgType\": \"HANG UP CALL\", \"number\": \"${channelLayout4.number}\"}"
+                val intent = Intent(this, WebSocketService::class.java)
+                intent.putExtra("msg_to_send", msg_to_send)
+                startService(intent)
+                channelLayout4.reset()
+            }
+
+        }
+
+
+
+
         val btn_startsvc = findViewById<View>(R.id.btn_startsvc) as Button
         btn_startsvc.setOnClickListener {
             if (!permissionToRecordAccepted) finish()
@@ -119,8 +255,52 @@ class MainActivity : AppCompatActivity() {
     inner class WSReceiver: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent != null) {
-                if(intent.extras?.get("type").toString()=="connect" && intent.extras?.get("data").toString()=="open")
-                    changeStatus()
+                val x = intent.extras?.get("msg");
+                Log.d("HANDLE MESSAGE PRE", x.toString())
+                if(intent.extras?.get("msg") == "connected") {
+                    Log.d("HANDLE MESSAGE", "connected...............")
+                }else if(intent.extras?.get("msg") == "disconnected") {
+//                    Log.d("HANDLE MESSAGE", "disconnected...............")
+                }else if(intent.extras?.get("msg") == "callinfo") {
+                    Log.d("ID", intent.extras?.get("callId").toString())
+                    Log.d("LOCAL URI", intent.extras?.get("localUri").toString())
+                    callId = intent.extras?.get("callId").toString()
+                    localUri = intent.extras?.get("localUri").toString()
+                }else {
+                    val msg_json = JSONObject(intent.extras?.get("msg").toString())
+                    when(msg_json.get("msgType").toString()) {
+                        "NEW CALL" -> {
+                            Log.d("HANDLE MESSAGE", "new call......................")
+                            val channelLayout1 = findViewById<ChannelLayout>(R.id.col1)
+                            val channelLayout2 = findViewById<ChannelLayout>(R.id.col2)
+                            val channelLayout3 = findViewById<ChannelLayout>(R.id.col3)
+                            val channelLayout4 = findViewById<ChannelLayout>(R.id.col4)
+                            if (channelLayout1.number == "0000") {
+                                channelLayout1.setChannelID(msg_json.get("id").toString())
+                                channelLayout1.setNumber(msg_json.get("localUri").toString())
+                                channelLayout1.setBColor(Color.parseColor("#FFDDDD"))
+                            }else if(channelLayout2.number == "0000") {
+                                channelLayout2.setChannelID(msg_json.get("id").toString())
+                                channelLayout2.setNumber(msg_json.get("localUri").toString())
+                                channelLayout2.setBColor(Color.parseColor("#DDDDDD"))
+                            }else if(channelLayout3.number == "0000") {
+                                channelLayout3.setChannelID(msg_json.get("id").toString())
+                                channelLayout3.setNumber(msg_json.get("localUri").toString())
+                                channelLayout3.setBColor(Color.parseColor("#FFDDDD"))
+                            }else if(channelLayout4.number == "0000") {
+                                channelLayout4.setChannelID(msg_json.get("id").toString())
+                                channelLayout4.setNumber(msg_json.get("localUri").toString())
+                                channelLayout4.setBColor(Color.parseColor("#DDDDDD"))
+                            }
+                        }
+                        "ANSWER CALL ACK" -> {
+                            Log.d("HANDLE MESSAGE", "answer call ack...............")
+                        }
+                        "HANG UP CALL ACK" -> {
+                            Log.d("HANDLE MESSAGE", "hang up call ack..............")
+                        }
+                    }
+                }
             }
         }
     }

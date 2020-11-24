@@ -39,6 +39,14 @@ class SipService : Service() {
                 }
                 val state = callInfo.state
                 if (state == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
+//                    Log.d("ID", callInfo.callIdString)
+//                    Log.d("LOCAL URI", callInfo.localUri)
+                    val intent = Intent("cn.fitcan.action.HANDLE_WS_MESSAGE")
+                    intent.putExtra("msg", "callinfo")
+                    intent.putExtra("callId", callInfo.callIdString)
+                    intent.putExtra("localUri", callInfo.localUri)
+                    intent.setPackage(packageName)
+                    sendBroadcast(intent);
                     println("==============正在呼出====================")
                 } else if (state == pjsip_inv_state.PJSIP_INV_STATE_EARLY) {
                     println("==============对方正在响铃====================")
@@ -158,7 +166,7 @@ class SipService : Service() {
                 callSetting.audioCount = 1
                 callSetting.videoCount = 0
                 callSetting.flag = pjsua_call_flag.PJSUA_CALL_INCLUDE_DISABLED_MEDIA.toLong()
-                myCall!!.makeCall("sip:4002@192.168.42.90", prm)
+                myCall!!.makeCall("sip:8101@192.168.1.32", prm)
                 println("call call call call")
             } catch (e: Exception) {
                 println(e)
