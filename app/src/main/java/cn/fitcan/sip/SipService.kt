@@ -178,16 +178,22 @@ class SipService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d("Sip Service", "onDestroy executed")
-        try {
-            myCall!!.delete()
-            acc!!.delete()
-            // Explicitly destroy and delete endpoint
-            ep!!.libDestroy()
-            ep!!.delete()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return
+        thread {
+            try {
+                ep?.libRegisterThread(Thread.currentThread().name)
+                myCall?.delete()
+                acc?.delete()
+                // Explicitly destroy and delete endpoint
+                ep?.libDestroy()
+                ep?.delete()
+            } catch (e: Exception) {
+                e.printStackTrace()
+//            return
+            }
+            val pid = Process.myPid()
+            Process.killProcess(pid)
         }
+
     }
 
     override fun onBind(intent: Intent): IBinder {

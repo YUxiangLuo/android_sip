@@ -10,64 +10,73 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="10dp"
         android:textSize="24sp"
         android:textColor="@color/black"
-        android:fontFamily="sans-serif-black"
-        android:text="NO.1"/>
+        android:fontFamily="sans-serif-black" />
 
     <TextView
+        android:id="@+id/channel_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:layout_marginTop="50dp"
         android:textSize="24sp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:background="#00FF00"
-        android:text="空闲"/>
+        android:text="空闲" />
 
     <TextView
         android:id="@+id/channel_number"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:layout_marginTop="50dp"
         android:textSize="24sp"
         android:textColor="@color/black"
-        android:fontFamily="sans-serif-black"
-        android:text="9527"/>
+        android:background="@color/white"
+        android:fontFamily="serif-monospace"
+        android:maxLines="2"
+        android:text="0000" />
 
-    <Button
-        android:id="@+id/btn_jieting"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="接听"
-        android:layout_marginTop="30dp"
-        android:textSize="18sp" />
-    <Button
-        android:id="@+id/btn_daiji"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="待机"
-        android:layout_marginTop="20dp"
-        android:textSize="18sp" />
-    <Button
-        android:id="@+id/btn_guaji"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="挂机"
-        android:layout_marginTop="20dp"
-        android:textSize="18sp" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="拨号"
-        android:layout_marginTop="20dp"
-        android:textSize="18sp" />
+        android:orientation="vertical"
+        android:gravity="bottom">
+        <Button
+            android:id="@+id/btn_jieting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="接听"
+            android:layout_marginTop="30dp"
+            android:textSize="18sp" />
+        <Button
+            android:id="@+id/btn_daiji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="待播"
+            android:layout_marginTop="20dp"
+            android:textSize="18sp" />
+        <Button
+            android:id="@+id/btn_guaji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="挂断"
+            android:layout_marginTop="20dp"
+            android:textSize="18sp" />
+<!--        <Button-->
+<!--            android:id="@+id/btn_kaimai"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:text="kaimai"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:textSize="18sp" />-->
+    </LinearLayout>
 </LinearLayout>
