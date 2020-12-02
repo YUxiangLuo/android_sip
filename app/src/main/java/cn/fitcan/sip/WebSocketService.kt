@@ -11,8 +11,8 @@ import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 class WebSocketService : Service() {
-//    private val ws_url: String = "ws://192.168.1.32:3000";
-    private val ws_url: String = "ws://192.168.1.31:1333";
+    private val ws_url: String = "ws://192.168.1.32:3000";
+//    private val ws_url: String = "ws://192.168.1.31:1333";
     private var webSocket: WebSocket? = null;
     private val client: OkHttpClient = OkHttpClient().newBuilder().pingInterval(1, TimeUnit.SECONDS).build();
     private val request: Request = Request.Builder().url(ws_url).build();

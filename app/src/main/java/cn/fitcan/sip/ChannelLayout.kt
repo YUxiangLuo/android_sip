@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 
@@ -36,19 +37,24 @@ class ChannelLayout : LinearLayout {
                 channel_status.setBackgroundColor(Color.BLUE)
                 channel_status.setTextColor(Color.WHITE)
                 channel_status.text = "待播"
+                findViewById<Button>(R.id.btn_daibo).isEnabled = false
+                findViewById<Button>(R.id.btn_jieting).isEnabled = false
             } else if (callStatus == CallStatus.接听) {
                 channel_status.setBackgroundColor(Color.YELLOW)
                 channel_status.setTextColor(Color.BLACK)
                 channel_status.text = "接听"
+                findViewById<Button>(R.id.btn_jieting).isEnabled = false
             } else if (callStatus == CallStatus.播出) {
                 channel_status.setBackgroundColor(Color.GREEN)
                 channel_status.setTextColor(Color.RED)
                 channel_status.text = "播出"
-            } else if (callStatus == CallStatus.挂断) {
-                channel_status.setBackgroundColor(Color.RED)
-                channel_status.setTextColor(Color.BLACK)
-                channel_status.text = "挂断"
             }
+//            else if (callStatus == CallStatus.挂断) {
+//                channel_status.setBackgroundColor(Color.RED)
+//                channel_status.setTextColor(Color.BLACK)
+//                channel_status.text = "挂断"
+//                findViewById<Button>(R.id.btn_guaji).isEnabled = false
+//            }
         }
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
@@ -62,6 +68,25 @@ class ChannelLayout : LinearLayout {
         callID = "#"
         number = "0000"
         setBColor(Color.parseColor("#000000"))
+        disableAllButtons()
+    }
+
+    fun disableAllButtons() {
+        findViewById<Button>(R.id.btn_jieting).isEnabled = false
+        findViewById<Button>(R.id.btn_daibo).isEnabled = false
+        findViewById<Button>(R.id.btn_guaji).isEnabled = false
+    }
+
+    fun enableAllButtons() {
+        if(callStatus == CallStatus.呼入) {
+            findViewById<Button>(R.id.btn_jieting).isEnabled = true
+            findViewById<Button>(R.id.btn_daibo).isEnabled = true
+            findViewById<Button>(R.id.btn_guaji).isEnabled = true
+        }else if(callStatus == CallStatus.待播) {
+            findViewById<Button>(R.id.btn_jieting).isEnabled = false
+            findViewById<Button>(R.id.btn_daibo).isEnabled = false
+            findViewById<Button>(R.id.btn_guaji).isEnabled = true
+        }
     }
 
     fun setBColor(color: Int) {

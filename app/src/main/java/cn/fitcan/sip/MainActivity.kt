@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 startService(intent)
             }
         }
-        channelLayout1.findViewById<View>(R.id.btn_daiji).setOnClickListener {
+        channelLayout1.findViewById<View>(R.id.btn_daibo).setOnClickListener {
             var msg_to_send = ""
             if (channelLayout1.callStatus!=CallStatus.空闲) {
                 msg_to_send = "{ \"msgType\": \"UPDATE CALL STATE\", \"callUri\": \"${channelLayout1.number}\", \"callState\": 3 }"
@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-        channelLayout2.findViewById<View>(R.id.btn_daiji).setOnClickListener {
+        channelLayout2.findViewById<View>(R.id.btn_daibo).setOnClickListener {
             var msg_to_send = ""
             if (channelLayout2.callStatus!=CallStatus.空闲) {
                 msg_to_send = "{ \"msgType\": \"UPDATE CALL STATE\", \"callUri\": \"${channelLayout2.number}\", \"callState\": 3 }"
@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-        channelLayout3.findViewById<View>(R.id.btn_daiji).setOnClickListener {
+        channelLayout3.findViewById<View>(R.id.btn_daibo).setOnClickListener {
             var msg_to_send = ""
             if (channelLayout3.callStatus!=CallStatus.空闲) {
                 msg_to_send = "{ \"msgType\": \"UPDATE CALL STATE\", \"callUri\": \"${channelLayout3.number}\", \"callState\": 3 }"
@@ -200,7 +200,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-        channelLayout4.findViewById<View>(R.id.btn_daiji).setOnClickListener {
+        channelLayout4.findViewById<View>(R.id.btn_daibo).setOnClickListener {
             var msg_to_send = ""
             if (channelLayout4.callStatus!=CallStatus.空闲) {
                 msg_to_send = "{ \"msgType\": \"UPDATE CALL STATE\", \"callUri\": \"${channelLayout4.number}\", \"callState\": 3 }"
@@ -274,6 +274,144 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        fun setStatusJieTingByCallUri(callUri: String) {
+            if(channelLayout1.number == callUri) {
+                channelLayout1.callStatus = CallStatus.接听
+                channelLayout2.disableAllButtons()
+                channelLayout3.disableAllButtons()
+                channelLayout4.disableAllButtons()
+            }else if(channelLayout2.number == callUri) {
+                channelLayout2.callStatus = CallStatus.接听
+                channelLayout1.disableAllButtons()
+                channelLayout3.disableAllButtons()
+                channelLayout4.disableAllButtons()
+            }else if(channelLayout3.number == callUri) {
+                channelLayout3.callStatus = CallStatus.接听
+                channelLayout1.disableAllButtons()
+                channelLayout2.disableAllButtons()
+                channelLayout4.disableAllButtons()
+            }else if(channelLayout4.number == callUri) {
+                channelLayout4.callStatus = CallStatus.接听
+                channelLayout1.disableAllButtons()
+                channelLayout2.disableAllButtons()
+                channelLayout3.disableAllButtons()
+            }
+        }
+
+        fun setStatusDaiBoByCallUri(callUri: String, micState: Int) {
+            if(channelLayout1.number == callUri) {
+                if (micState == 0) channelLayout1.callStatus = CallStatus.待播
+                else channelLayout1.callStatus = CallStatus.播出
+                channelLayout2.enableAllButtons()
+                channelLayout3.enableAllButtons()
+                channelLayout4.enableAllButtons()
+            }else if(channelLayout2.number == callUri) {
+                if (micState == 0) channelLayout2.callStatus = CallStatus.待播
+                else channelLayout2.callStatus = CallStatus.播出
+                channelLayout1.enableAllButtons()
+                channelLayout3.enableAllButtons()
+                channelLayout4.enableAllButtons()
+            }else if(channelLayout3.number == callUri) {
+                if (micState == 0) channelLayout3.callStatus = CallStatus.待播
+                else channelLayout3.callStatus = CallStatus.播出
+                channelLayout1.enableAllButtons()
+                channelLayout2.enableAllButtons()
+                channelLayout4.enableAllButtons()
+            }else if(channelLayout4.number == callUri) {
+                if (micState == 0) channelLayout4.callStatus = CallStatus.待播
+                else channelLayout4.callStatus = CallStatus.播出
+                channelLayout1.enableAllButtons()
+                channelLayout2.enableAllButtons()
+                channelLayout3.enableAllButtons()
+            }
+        }
+
+        fun setStatusHuruByIndex(index: Int, callUri: String) {
+            var isInJieTing = false
+            if(channelLayout1.callStatus==CallStatus.接听 || channelLayout2.callStatus==CallStatus.接听 || channelLayout3.callStatus==CallStatus.接听 || channelLayout4.callStatus==CallStatus.接听) {
+                isInJieTing = true
+            }
+            when(index) {
+                1 -> {
+                    channelLayout1.number = callUri
+                    channelLayout1.callStatus = (CallStatus.呼入);
+                    channelLayout1.setBColor(Color.parseColor("#FFFFFF"))
+                    if(!isInJieTing) channelLayout1.enableAllButtons()
+                }
+                2 -> {
+                    channelLayout2.number = callUri
+                    channelLayout2.callStatus = (CallStatus.呼入);
+                    channelLayout2.setBColor(Color.parseColor("#FFFFFF"))
+                    if(!isInJieTing) channelLayout2.enableAllButtons()
+                }
+                3 -> {
+                    channelLayout3.number = callUri
+                    channelLayout3.callStatus = (CallStatus.呼入);
+                    channelLayout3.setBColor(Color.parseColor("#FFFFFF"))
+                    if(!isInJieTing) channelLayout3.enableAllButtons()
+                }
+                4 -> {
+                    channelLayout4.number = callUri
+                    channelLayout4.callStatus = (CallStatus.呼入);
+                    channelLayout4.setBColor(Color.parseColor("#FFFFFF"))
+                    if(!isInJieTing) channelLayout4.enableAllButtons()
+                }
+            }
+        }
+
+        fun setStatusHuruByCallUri(callUri: String) {
+            var isInJieTing = false
+            if(channelLayout1.callStatus==CallStatus.接听 || channelLayout2.callStatus==CallStatus.接听 || channelLayout3.callStatus==CallStatus.接听 || channelLayout4.callStatus==CallStatus.接听) {
+                isInJieTing = true
+            }
+            if(channelLayout1.number == callUri) {
+                channelLayout1.number = callUri
+                channelLayout1.callStatus = (CallStatus.呼入);
+                channelLayout1.setBColor(Color.parseColor("#FFFFFF"))
+                if(!isInJieTing) channelLayout1.enableAllButtons()
+            }else if(channelLayout2.number == callUri) {
+                channelLayout2.number = callUri
+                channelLayout2.callStatus = (CallStatus.呼入);
+                channelLayout2.setBColor(Color.parseColor("#FFFFFF"))
+                if(!isInJieTing) channelLayout2.enableAllButtons()
+            }else if(channelLayout3.number == callUri) {
+                channelLayout3.number = callUri
+                channelLayout3.callStatus = (CallStatus.呼入);
+                channelLayout3.setBColor(Color.parseColor("#FFFFFF"))
+                if(!isInJieTing) channelLayout3.enableAllButtons()
+            }else if(channelLayout4.number == callUri) {
+                channelLayout4.number = callUri
+                channelLayout4.callStatus = (CallStatus.呼入);
+                channelLayout4.setBColor(Color.parseColor("#FFFFFF"))
+                if(!isInJieTing) channelLayout4.enableAllButtons()
+            }
+
+        }
+
+        fun setStatusGuaDuanByCallUri(callUri: String) {
+            if(channelLayout1.number == callUri) {
+                channelLayout1.reset()
+                channelLayout2.enableAllButtons()
+                channelLayout3.enableAllButtons()
+                channelLayout4.enableAllButtons()
+            }else if(channelLayout2.number == callUri) {
+                channelLayout2.reset()
+                channelLayout1.enableAllButtons()
+                channelLayout3.enableAllButtons()
+                channelLayout4.enableAllButtons()
+            }else if(channelLayout3.number == callUri) {
+                channelLayout3.reset()
+                channelLayout1.enableAllButtons()
+                channelLayout2.enableAllButtons()
+                channelLayout4.enableAllButtons()
+            }else if(channelLayout4.number == callUri) {
+                channelLayout4.reset()
+                channelLayout1.enableAllButtons()
+                channelLayout2.enableAllButtons()
+                channelLayout3.enableAllButtons()
+            }
+        }
+
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent != null) {
                 val x = intent.extras?.get("msg");
@@ -304,40 +442,33 @@ class MainActivity : AppCompatActivity() {
                         1 -> {
                             Log.d("HANDLE MESSAGE", "新接入电话，待导播接听...............")
                             if(channelLayout1.callStatus==CallStatus.空闲) {
-                                channelLayout1.number = callUri
-                                channelLayout1.callStatus = (CallStatus.呼入);
-                                channelLayout1.setBColor(Color.parseColor("#FFFFFF"))
+                                setStatusHuruByIndex(1, callUri)
                             }else if(channelLayout2.callStatus==CallStatus.空闲) {
-                                channelLayout2.number = callUri
-                                channelLayout2.callStatus = (CallStatus.呼入);
-                                channelLayout2.setBColor(Color.parseColor("#FFFFFF"))
+                                setStatusHuruByIndex(2, callUri)
                             }else if(channelLayout3.callStatus==CallStatus.空闲) {
-                                channelLayout3.number = callUri
-                                channelLayout3.callStatus = (CallStatus.呼入);
-                                channelLayout3.setBColor(Color.parseColor("#FFFFFF"))
+                                setStatusHuruByIndex(3, callUri)
                             }else if(channelLayout4.callStatus==CallStatus.空闲) {
-                                channelLayout4.number = callUri
-                                channelLayout4.callStatus = (CallStatus.呼入);
-                                channelLayout4.setBColor(Color.parseColor("#FFFFFF"))
+                                setStatusHuruByIndex(4, callUri)
                             }else {
                                 Log.d("HANDLE MESSAGE", "当前4路已满！...............")
                             }
                         }
                         2 -> {
                             Log.d("HANDLE MESSAGE", "导播已接入...............")
-                            findChannelLayoutByCallUri(callUri)?.callStatus = CallStatus.接听
+                            setStatusJieTingByCallUri(callUri)
                         }
                         3 -> {
                             Log.d("HANDLE MESSAGE", "主持人已接入，待播...............")
-                            findChannelLayoutByCallUri(callUri)?.callStatus = CallStatus.待播
+                            val micState = msg_json.get("micState").toString().toInt()
+                            setStatusDaiBoByCallUri(callUri, micState)
                         }
                         4 -> {
                             Log.d("HANDLE MESSAGE", "等待导播接入，不过代表这不是第一次接入...............")
-                            findChannelLayoutByCallUri(callUri)?.callStatus = CallStatus.呼入
+                            setStatusHuruByCallUri(callUri)
                         }
                         0 -> {
                             Log.d("HANDLE MESSAGE", "已挂机，须从界面删除...............")
-                            findChannelLayoutByCallUri(callUri)?.reset()
+                            setStatusGuaDuanByCallUri(callUri)
                         }
                     }
                 }

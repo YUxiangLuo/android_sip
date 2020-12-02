@@ -52,14 +52,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="接听"
+            android:enabled="false"
             android:layout_marginTop="30dp"
             android:textSize="18sp" />
         <Button
-            android:id="@+id/btn_daiji"
+            android:id="@+id/btn_daibo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="待播"
+            android:enabled="false"
             android:layout_marginTop="20dp"
             android:textSize="18sp" />
         <Button
@@ -68,6 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="挂断"
+            android:enabled="false"
             android:layout_marginTop="20dp"
             android:textSize="18sp" />
 <!--        <Button-->
